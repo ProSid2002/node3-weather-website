@@ -47,40 +47,28 @@ app.get("/weather", (req, res) => {
     return res.send({
       error: "Please provide an address term",
     });
-  // res.send({
-  //   forecast: "Clear",
-  //   location: "Philadelphia",
-  //   address: req.query.address,
-  // });
 
   geocode(
     req.query.address,
     (error, { latitude, longitude, location } = {}) => {
       if (error) return res.send({ error });
-      forecast(latitude, longitude, (error, forecast) => {
-        if (error) return res.send({ error });
-        res.send({
-          location,
-          address: req.query.address,
-          forecast,
-        });
-      });
+      forecast(
+        latitude,
+        longitude,
+        (error, { forecast, wind_speed, visibility }) => {
+          if (error) return res.send({ error });
+          res.send({
+            location,
+            address: req.query.address,
+            forecast,
+            wind_speed,
+            visibility,
+          });
+        }
+      );
     }
   );
 });
-
-// app.get("/products", (req, res) => {
-//   if (!req.query.search) {
-//     res.send({
-//       error: "You must provide a search term",
-//     });
-//     return;
-//   }
-//   console.log(req.query);
-//   res.send({
-//     products: [],
-//   });
-// });
 
 app.get("/help/*", (req, res) => {
   res.render("404", {
